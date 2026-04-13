@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proposal for Patchwork</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --paper: #f8f6f1;
+    --accent: #8b2500;
+    --muted: #6b6560;
+    --rule: #d4cfc8;
+    --highlight: #f0ebe3;
+    --kernel: #8b2500;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    color: var(--ink);
+    background: var(--paper);
+    line-height: 1.65;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 740px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 5rem;
+  }
+
+  header {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  header h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  header .subtitle {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 1rem;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .status {
+    display: inline-block;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    border: 1.5px solid var(--accent);
+    padding: 0.2em 0.6em;
+    margin-bottom: 1rem;
+  }
+
+  .preamble {
+    font-size: 1.05rem;
+    color: var(--muted);
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  section {
+    margin-bottom: 2.5rem;
+  }
+
+  section:last-of-type {
+    margin-bottom: 0;
+  }
+
+  h2 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+
+  h2 .number {
+    color: var(--accent);
+    margin-right: 0.3em;
+  }
+
+  h3 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin-bottom: 0.6rem;
+  }
+
+  p {
+    margin-bottom: 1rem;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+
+  .card {
+    background: var(--highlight);
+    border-left: 3px solid var(--accent);
+    padding: 1.2rem 1.4rem;
+    margin: 1rem 0;
+  }
+
+  .card p {
+    font-size: 0.95rem;
+  }
+
+  .kernel-box {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 1.4rem 1.6rem;
+    margin: 1rem 0;
+  }
+
+  .kernel-box h3 {
+    color: rgba(248,246,241,0.5);
+  }
+
+  .kernel-box p {
+    font-size: 0.95rem;
+    color: rgba(248,246,241,0.9);
+  }
+
+  .steps {
+    display: flex;
+    gap: 1px;
+    margin: 1rem 0;
+    background: var(--rule);
+  }
+
+  .step {
+    flex: 1;
+    background: var(--paper);
+    padding: 1rem 1.2rem;
+  }
+
+  .step-num {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    margin-bottom: 0.3rem;
+  }
+
+  .step-title {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .step-desc {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .arrow {
+    display: flex;
+    align-items: center;
+    background: var(--highlight);
+    padding: 0 0.4rem;
+    color: var(--accent);
+    font-size: 1.2rem;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--rule);
+    margin: 1rem 0;
+  }
+
+  .two-col .col {
+    background: var(--paper);
+    padding: 1rem 1.2rem;
+  }
+
+  .two-col .col-header {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .two-col .col p {
+    font-size: 0.9rem;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 2.5rem 0;
+  }
+
+  .common-list {
+    margin: 1rem 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .common-list li {
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 0.95rem;
+    display: flex;
+    gap: 0.8rem;
+  }
+
+  .common-list li:last-child {
+    border-bottom: none;
+  }
+
+  .common-list .label {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+    min-width: 7rem;
+    padding-top: 0.15rem;
+  }
+
+  .open-questions {
+    background: var(--highlight);
+    padding: 1.4rem 1.6rem;
+    margin-top: 2rem;
+  }
+
+  .open-questions h2 {
+    font-size: 1.1rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .open-questions p {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  @media (max-width: 600px) {
+    header h1 { font-size: 1.7rem; }
+    .steps { flex-direction: column; }
+    .arrow { padding: 0.3rem 1rem; }
+    .arrow::after { content: "↓"; }
+    .arrow span { display: none; }
+    .two-col { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="status">Working Draft</div>
+  <h1>Proposal for Patchwork</h1>
+  <div class="subtitle">Making something of the protobranches</div>
+</header>
+
+<div class="preamble">
+  An alternative to the traditional party model of geographic branches delegating upward through a representative hierarchy. Instead: a federation of autonomous, overlapping groups ("patches") coordinating through shared infrastructure, with a clear separation between fast action and slow deliberation.
+</div>
+
+<!-- 1. THE PATCH -->
+<section>
+  <h2><span class="number">1.</span> The Patch</h2>
+  <p>The basic unit of the federation is not a geographic branch but a <strong>patch</strong>: any self-governing group of people in ongoing political relationship with each other. A workplace group, a tenants' association, a campaign group, or a pre-existing protobranch originally formed for Your Party.</p>
+  <p>Patches are defined by social relationships and shared practice, not by territory. They can overlap: one person may belong to several patches. They do not need to be geographically contiguous.</p>
+
+  <div class="card">
+    <h3>Affiliation criteria</h3>
+    <p>To affiliate with the federation, a patch must meet common practices (see section 6) and adhere to the ethical kernel (see section 7). The criteria are structural and behavioural, not ideological beyond the kernel. Politically diverse groups can federate without splitting over theoretical disagreements that have no operational consequence.</p>
+  </div>
+
+  <div class="card">
+    <h3>Patch governance</h3>
+    <p>Each patch has a committee (its slow, deliberative body) which requires at minimum a chair, a secretary, and a treasurer (any or all of which may be held as co-roles). Beyond these core roles, patches may define additional officer roles as they see fit. The precise shape of patch governance can vary; the common practices (section 6) set the floor, not the ceiling.</p>
+    <p>All committees must be majority lay members: people who do not hold officer or working group lead roles on that committee. This applies at every level, including the FAC, and prevents committees from becoming self-referential bodies of officeholders detached from the membership they serve.</p>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 2. FAST & SLOW -->
+<section>
+  <h2><span class="number">2.</span> Fast and Slow</h2>
+  <p>The federation distinguishes between two modes of operation, borrowed from how effective organisations actually function.</p>
+
+  <div class="two-col">
+    <div class="col">
+      <div class="col-header">Fast: Working Groups</div>
+      <p>Do actual work. Campaign, organise, produce materials, respond to events. Form across patches as needed. Operate mostly by informal consent. Time-limited and task-specific.</p>
+    </div>
+    <div class="col">
+      <div class="col-header">Slow: Committees</div>
+      <p>Deliberate on what working groups bring them. Set strategic direction. Review and ratify. May be thematic, geographic, or both, depending on what's actually needed.</p>
+    </div>
+  </div>
+
+  <p>Neither body is "above" the other. The committee does not command the working group; it reviews and ratifies. The working group does not bypass the committee; it reports back. Sometimes the same people sit in both.</p>
+
+  <div class="card">
+    <h3>Motions and working groups</h3>
+    <p>A member submits a motion to their patch committee. It is then heard at the next patch meeting, and if the patch consents, the committee creates a working group with a specific remit and a specific time window for action. The time window can be renewed, but it must be explicitly renewed; there is no indefinite mandate. The working group reports back to the committee, which deliberates on the outcome.</p>
+  </div>
+
+  <div class="card">
+    <h3>Emergency decisions</h3>
+    <p>Patch committees (including the FAC) can make emergency decisions between meetings when circumstances demand it. However, they must answer for those decisions at the next patch meeting. Members can challenge emergency decisions through the three-step process, and committee members who made them are subject to recall under the same conditions as FAC members: petition from the membership with a reasonable threshold.</p>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 3. THREE STEPS -->
+<section>
+  <h2><span class="number">3.</span> Three-Step Decision Process</h2>
+  <p>All deliberative bodies use the same escalating process. Most decisions resolve at step one. The heavier machinery exists but is rarely needed.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">Step 1</div>
+      <div class="step-title">Informal Consent</div>
+      <div class="step-desc">Discussion until no one objects. The default mode. Fast, low-friction, sufficient for the vast majority of decisions.</div>
+    </div>
+    <div class="arrow"><span>→</span></div>
+    <div class="step">
+      <div class="step-num">Step 2</div>
+      <div class="step-title">Formal Consent</div>
+      <div class="step-desc">Structured facilitation of the disagreement. If deadlock persists, escalates.</div>
+    </div>
+    <div class="arrow"><span>→</span></div>
+    <div class="step">
+      <div class="step-num">Step 3</div>
+      <div class="step-title">Ballot</div>
+      <div class="step-desc">A deciding vote. The result carries legitimacy because deliberation has visibly occurred first.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 4. NATIONAL BODIES -->
+<section>
+  <h2><span class="number">4.</span> National Bodies</h2>
+  <p>The federation operates national-level patches for coordination across the whole organisation. With the exception of the Federation Action Committee, participation in national patches is voluntary.</p>
+
+  <div class="card">
+    <h3>The Federation Action Committee (FAC)</h3>
+    <p>The FAC is itself a patch: the committee of a national-level patch whose members are elected at conference. It operates the same way as any other patch committee (chair, secretary, treasurer; motions; three-step process), just at federation scale.</p>
+    <p>The FAC's permanent working groups handle the federation's ongoing functions: communications, membership, finance, and so on. These are created and renewed by motions to the FAC in the normal way.</p>
+    <p>The FAC is empowered to act rapidly in emergency circumstances: issuing statements, condemning atrocities, calling for urgent campaigns (e.g. against hostile legislation), demanding government action on crises. It also carries out the general strategic direction set at the General Strategy Plenary (see section 5). It is not empowered to set policy or strategy on its own initiative.</p>
+    <p>The exact size and composition of the FAC is to be decided at the inaugural conference. FAC members are subject to recall by petition from the membership, with a reasonable threshold. The federation must provide the infrastructure for members to submit recall petitions.</p>
+  </div>
+
+  <p>Other national patches are voluntary coordination bodies, thematic or functional, that exist to facilitate cooperation across the federation. They follow the same model as any other patch: committee, working groups, motions, three-step process.</p>
+  <p>Delegates to any national body are mandated and instantly recallable by the patch or body that sent them.</p>
+</section>
+
+<hr class="divider">
+
+<!-- 5. CONFERENCE -->
+<section>
+  <h2><span class="number">5.</span> Conference</h2>
+  <p>Because patches can produce binding decisions through their own deliberative processes without waiting for an annual gathering, conference is freed from the bottleneck of being the only place where policy happens. Instead, conference focuses on three things:</p>
+
+  <div class="two-col" style="grid-template-columns: 1fr;">
+    <div class="col">
+      <div class="col-header">General Strategy Plenary</div>
+      <p>The core deliberative session. Sets the broad strategic direction for the federation, which the FAC is then mandated to carry out. Policy decisions are made directly here.</p>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="col">
+      <div class="col-header">Ethical Kernel Review</div>
+      <p>The only venue where expansions (never reductions) to the ethical kernel can be proposed and ratified.</p>
+    </div>
+    <div class="col">
+      <div class="col-header">Inside Out</div>
+      <p>The fringe becomes the core. Educational sessions, training, and political debates led by various patches. Conference as a site of learning and political development, not just administration.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 6. COMMON PRACTICES -->
+<section>
+  <h2><span class="number">6.</span> Common Practices</h2>
+  <p>The federation does not impose uniformity on its patches. However, all affiliated patches must meet shared minimum standards in the following areas:</p>
+
+  <ul class="common-list">
+    <li>
+      <span class="label">Democracy</span>
+      <span>Internal decision-making must be genuinely democratic. If a patch isn't internally democratic, its delegates don't represent anyone and the federation's legitimacy collapses.</span>
+    </li>
+    <li>
+      <span class="label">Safeguarding</span>
+      <span>Consistent safeguarding practices across all patches, so that vulnerable people are protected regardless of which patch they are in or move between.</span>
+    </li>
+    <li>
+      <span class="label">Legal compliance</span>
+      <span>The federation exists in the real world and must meet its legal obligations.</span>
+    </li>
+  </ul>
+</section>
+
+<hr class="divider">
+
+<!-- 7. ETHICAL KERNEL -->
+<section>
+  <h2><span class="number">7.</span> The Ethical Kernel</h2>
+
+  <div class="kernel-box">
+    <h3>Foundational principle</h3>
+    <p>The ethical kernel defines the non-negotiable ethical commitments of the federation. It can be modified only to <em>raise</em> the bar, never to lower it. Patches may hold stronger ethical commitments than the kernel requires, but none may fall below it.</p>
+  </div>
+
+  <p>The kernel is what makes the federation more than a mailing list. It defines who is in and who is out on ethical, not ideological, grounds. A patch that platforms transphobes, engages in rape apologia, or promotes racism is in violation of the kernel regardless of its other political positions.</p>
+</section>
+
+<hr class="divider">
+
+<!-- 8. DISPUTE RESOLUTION -->
+<section>
+  <h2><span class="number">8.</span> Dispute Resolution</h2>
+  <p>Disputes between patches are resolved by <strong>transient merger</strong>: the disputing patches temporarily become a single deliberative body and resolve the disagreement together using the three-step process. They de-merge afterward. Neither patch is absorbed or subordinated.</p>
+  <p>Talking about unity is a fine thing. Practicing it is even better.</p>
+  <p>However, in extreme cases, Resolutions can mediate between patches.</p>
+
+  <div class="card">
+    <h3>Exception: Resolutions</h3>
+    <p>Safeguarding concerns and ethical kernel violations do not go through the normal dispute process. These are handled by <strong>Resolutions</strong>, a structurally independent body. Safeguarding disputes are allegations of harm, not political disagreements between peers, and require a different process that does not ask those who have been harmed to share a deliberative space with those who have harmed them.</p>
+    <p>Resolutions panels are majority sortitioned (drawn by lot from the membership), with an elected officer core forming the committee. When a case concerns a specific form of oppression (e.g. anti-Black racism, transphobia), the sortition is weighted to ensure representation from the community impacted. The weighting should be meaningful but not total: the panel must be broadly representative while centring the experience of those most affected.</p>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- REMAINING QUESTIONS -->
+<section>
+  <h2>For Further Discussion</h2>
+  <p>The following are deliberately left open for the founding membership to resolve, either at the inaugural conference or through the federation's own processes once established.</p>
+
+  <ul class="common-list">
+    <li>
+      <span class="label">Ethical kernel</span>
+      <span>What specific commitments belong in the kernel? This is a political question for the founding membership, not a design question.</span>
+    </li>
+    <li>
+      <span class="label">FAC composition</span>
+      <span>How many members? What balance of roles? To be decided at the inaugural conference.</span>
+    </li>
+    <li>
+      <span class="label">Recall threshold</span>
+      <span>What constitutes a "reasonable bar" for recall petitions? High enough to prevent frivolous use, low enough to be a real accountability mechanism.</span>
+    </li>
+    <li>
+      <span class="label">Sortition weights</span>
+      <span>How should weighting for Resolutions panels be calibrated? What counts as "meaningful but not total" representation from impacted communities?</span>
+    </li>
+  </ul>
+</section>
+
+</div>
+</body>
+</html>
