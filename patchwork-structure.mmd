@@ -1,0 +1,46 @@
+%% Patchwork Federation — structure
+flowchart TB
+  MEMBERS(["Membership"])
+
+  subgraph CONSTRAINTS[" "]
+    direction TB
+    KERNEL["Ethical Kernel<br/><i>raise-only floor</i>"]
+    PRACTICES["Common Practices<br/>democracy · safeguarding · legal"]
+  end
+
+  subgraph PATCHES["Patches"]
+    direction LR
+    P1["Patch A"]
+    P2["Patch B"]
+    P3["Patch …"]
+  end
+
+  subgraph NATIONAL["National Bodies"]
+    direction TB
+    FAC["Federation Action Committee<br/><i>patch at federation scale</i>"]
+    NATPATCH["Other National Patches<br/><i>voluntary</i>"]
+  end
+
+  CONF["Conference<br/><i>annual</i>"]
+  RES["Resolutions<br/><i>independent track</i>"]
+
+  MEMBERS -->|form| PATCHES
+  MEMBERS -->|elects at conference<br/>+ recall petition| FAC
+  MEMBERS -.->|sortition pool| RES
+
+  CONSTRAINTS ==>|gate affiliation| PATCHES
+  PATCHES -->|mandated, recallable<br/>delegates| NATIONAL
+  PATCHES -->|send delegates| CONF
+  PATCHES <-.->|inter-patch dispute<br/>transient merger| PATCHES
+  PATCHES ==>|safeguarding or<br/>kernel violation| RES
+
+  CONF -->|mandates strategy| FAC
+  CONF -.->|may raise| KERNEL
+  RES -.-> KERNEL
+
+  classDef kernel fill:#1a1a1a,color:#f8f6f1,stroke:#1a1a1a,stroke-width:2px
+  classDef accent fill:#f0ebe3,stroke:#8b2500,stroke-width:2px,color:#1a1a1a
+  classDef body fill:#f8f6f1,stroke:#1a1a1a,stroke-width:1.5px,color:#1a1a1a
+  class KERNEL kernel
+  class PRACTICES,FAC,RES accent
+  class NATPATCH,P1,P2,P3,CONF,MEMBERS body

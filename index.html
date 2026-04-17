@@ -5,6 +5,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Proposal for Patchwork</title>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      fontFamily: "'Source Sans 3', sans-serif",
+      fontSize: '14px',
+      primaryColor: '#f0ebe3',
+      primaryTextColor: '#1a1a1a',
+      primaryBorderColor: '#8b2500',
+      lineColor: '#6b6560',
+      secondaryColor: '#f8f6f1',
+      tertiaryColor: '#f8f6f1',
+      clusterBkg: '#f8f6f1',
+      clusterBorder: '#d4cfc8'
+    }
+  });
+</script>
 <style>
   :root {
     --ink: #1a1a1a;
@@ -263,6 +282,98 @@
     color: var(--muted);
   }
 
+  .diagram {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    padding: 1.2rem 0.8rem 0.6rem;
+    margin: 1rem 0 0.5rem;
+    cursor: zoom-in;
+    position: relative;
+  }
+
+  .diagram::after {
+    content: "⤢ click to enlarge";
+    position: absolute;
+    top: 0.5rem;
+    right: 0.8rem;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  .diagram .mermaid {
+    text-align: center;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+
+  .diagram .mermaid svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .diagram-caption {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.8rem;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 0.6rem;
+  }
+
+  .diagram-stack {
+    display: grid;
+    gap: 0.6rem;
+    margin: 1rem 0 0.5rem;
+  }
+
+  .diagram-stack .diagram {
+    margin: 0;
+  }
+
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(26,26,26,0.92);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    cursor: zoom-out;
+    padding: 2rem;
+  }
+
+  .lightbox.open {
+    display: flex;
+  }
+
+  .lightbox-inner {
+    background: var(--paper);
+    padding: 1.5rem;
+    max-width: 95vw;
+    max-height: 95vh;
+    overflow: auto;
+    cursor: default;
+  }
+
+  .lightbox-inner svg {
+    max-width: none;
+    height: auto;
+    display: block;
+  }
+
+  .lightbox-close {
+    position: absolute;
+    top: 1rem;
+    right: 1.2rem;
+    background: none;
+    border: none;
+    color: var(--paper);
+    font-size: 2rem;
+    font-family: 'Source Sans 3', sans-serif;
+    cursor: pointer;
+    line-height: 1;
+  }
+
   @media (max-width: 600px) {
     header h1 { font-size: 1.7rem; }
     .steps { flex-direction: column; }
@@ -285,6 +396,151 @@
 <div class="preamble">
   An alternative to the traditional party model of geographic branches delegating upward through a representative hierarchy. Instead: a federation of autonomous, overlapping groups ("patches") coordinating through shared infrastructure, with a clear separation between fast action and slow deliberation.
 </div>
+
+<!-- STRUCTURAL OVERVIEW -->
+<section>
+  <h2><span class="number">0.</span> At a Glance</h2>
+  <p>Two diagrams. The first shows <em>structure</em>: how patches, national bodies, conference, and Resolutions fit together. The second shows <em>process</em>: the motion-to-working-group cycle and the three-step decision escalation. Click either to enlarge.</p>
+
+  <div class="diagram-stack">
+
+    <div class="diagram" data-zoomable>
+      <div class="mermaid">
+flowchart TB
+  MEMBERS(["Membership"])
+
+  subgraph CONSTRAINTS[" "]
+    direction TB
+    KERNEL["Ethical Kernel<br/><i>raise-only floor</i>"]
+    PRACTICES["Common Practices<br/>democracy · safeguarding · legal"]
+  end
+
+  subgraph PATCHES["Patches"]
+    direction LR
+    P1["Patch A"]
+    P2["Patch B"]
+    P3["Patch …"]
+  end
+
+  subgraph NATIONAL["National Bodies"]
+    direction TB
+    FAC["Federation Action Committee<br/><i>patch at federation scale</i>"]
+    NATPATCH["Other National Patches<br/><i>voluntary</i>"]
+  end
+
+  CONF["Conference<br/><i>annual</i>"]
+  RES["Resolutions<br/><i>independent track</i>"]
+
+  MEMBERS -->|form| PATCHES
+  MEMBERS -->|elects at conference<br/>+ recall petition| FAC
+  MEMBERS -.->|sortition pool| RES
+
+  CONSTRAINTS ==>|gate affiliation| PATCHES
+  PATCHES -->|mandated, recallable<br/>delegates| NATIONAL
+  PATCHES -->|send delegates| CONF
+  PATCHES <-.->|inter-patch dispute<br/>transient merger| PATCHES
+  PATCHES ==>|safeguarding or<br/>kernel violation| RES
+
+  CONF -->|mandates strategy| FAC
+  CONF -.->|may raise| KERNEL
+  RES -.-> KERNEL
+
+  classDef kernel fill:#1a1a1a,color:#f8f6f1,stroke:#1a1a1a,stroke-width:2px
+  classDef accent fill:#f0ebe3,stroke:#8b2500,stroke-width:2px,color:#1a1a1a
+  classDef body fill:#f8f6f1,stroke:#1a1a1a,stroke-width:1.5px,color:#1a1a1a
+  class KERNEL kernel
+  class PRACTICES,FAC,RES accent
+  class NATPATCH,P1,P2,P3,CONF,MEMBERS body
+      </div>
+      <div class="diagram-caption">Structure. Solid = ordinary flow. Dashed = reference or discretionary. Bold double = gated or privileged channel.</div>
+    </div>
+
+    <div class="diagram" data-zoomable>
+      <div class="mermaid">
+flowchart TB
+
+  subgraph MEETING["At the meeting"]
+    direction TB
+    M(["Member"]) -->|submits motion<br/>in advance| AGENDA["Standing orders<br/><i>compile agenda</i>"]
+    AGENDA --> SENSE{{"Sense vote<br/><i>federation floor threshold</i>"}}
+    SENSE -->|passes| S1["Step 1<br/>Informal Consent"]
+    SENSE -.->|fails| DROP["Drops off agenda"]
+    S1 -->|objection| S2["Step 2<br/>Formal Consent<br/><i>dedicated session</i>"]
+    S2 -->|deadlock| S3["Step 3<br/>Ballot"]
+    S1 -->|passes| OUT(["Decision"])
+    S2 -->|consent reached| OUT
+    S3 --> OUT
+  end
+
+  subgraph WG_CYCLE["Working Group cycle"]
+    direction TB
+    COMM["Patch Committee<br/>chair · secretary · treasurer<br/><b>majority lay</b>"] -->|creates on consent| WG["Working Group<br/><i>time-limited remit</i>"]
+    WG -->|reports back| COMM
+    COMM -.->|renew or close| WG
+  end
+
+  OUT -.creates WG via.-> COMM
+
+  classDef accent fill:#f0ebe3,stroke:#8b2500,stroke-width:2px,color:#1a1a1a
+  classDef body fill:#f8f6f1,stroke:#1a1a1a,stroke-width:1.5px,color:#1a1a1a
+  classDef process fill:#fff,stroke:#8b2500,stroke-width:1.5px,color:#1a1a1a,stroke-dasharray: 3 3
+  classDef muted fill:#f8f6f1,stroke:#d4cfc8,stroke-width:1px,color:#6b6560,stroke-dasharray: 2 2
+  class COMM accent
+  class WG,M,AGENDA,OUT body
+  class S1,S2,S3 process
+  class DROP muted
+      </div>
+      <div class="diagram-caption">Process. Motions submitted in advance hit a sense vote; survivors enter the three-step process. Resolutions does not use this flow — see section 8.</div>
+    </div>
+
+  </div>
+</section>
+
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <button class="lightbox-close" aria-label="Close">×</button>
+  <div class="lightbox-inner" id="lightbox-inner"></div>
+</div>
+
+<script>
+  (function () {
+    const lightbox = document.getElementById('lightbox');
+    const inner = document.getElementById('lightbox-inner');
+    const closeBtn = lightbox.querySelector('.lightbox-close');
+
+    function open(svg) {
+      const clone = svg.cloneNode(true);
+      clone.removeAttribute('style');
+      clone.setAttribute('width', svg.getBBox ? svg.getBBox().width : svg.getAttribute('width') || '1200');
+      inner.innerHTML = '';
+      inner.appendChild(clone);
+      lightbox.classList.add('open');
+      lightbox.setAttribute('aria-hidden', 'false');
+    }
+
+    function close() {
+      lightbox.classList.remove('open');
+      lightbox.setAttribute('aria-hidden', 'true');
+      inner.innerHTML = '';
+    }
+
+    document.querySelectorAll('[data-zoomable]').forEach(function (host) {
+      host.addEventListener('click', function (e) {
+        if (e.target.closest('a')) return;
+        const svg = host.querySelector('svg');
+        if (svg) open(svg);
+      });
+    });
+
+    lightbox.addEventListener('click', function (e) {
+      if (e.target === lightbox || e.target === closeBtn) close();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') close();
+    });
+  })();
+</script>
+
+<hr class="divider">
 
 <!-- 1. THE PATCH -->
 <section>
@@ -339,8 +595,15 @@
 
 <!-- 3. THREE STEPS -->
 <section>
-  <h2><span class="number">3.</span> Three-Step Decision Process</h2>
-  <p>All deliberative bodies use the same escalating process. Most decisions resolve at step one. The heavier machinery exists but is rarely needed.</p>
+  <h2><span class="number">3.</span> Meetings and the Three-Step Process</h2>
+  <p>Meetings combine a lightweight agenda-filter borrowed from <em>Martha's Rules</em> with the three-step process. Motions are submitted in advance according to the patch's standing orders. At the meeting, each motion is <strong>sense voted</strong>: a quick show of support that determines whether the motion is worth the body's deliberative time. Motions that pass the sense vote enter the three-step process. Those that fail drop off the agenda.</p>
+
+  <div class="card">
+    <h3>Sense vote threshold</h3>
+    <p>The federation sets a <strong>floor threshold</strong> for the sense vote centrally. Patches may adopt a higher threshold, never a lower one. This prevents patches from effectively disabling agenda-filtering while preserving their freedom to set a stricter bar.</p>
+  </div>
+
+  <p>All deliberative bodies use this process, except Resolutions (see section 8). Most decisions resolve at step one. The heavier machinery exists but is rarely needed.</p>
 
   <div class="steps">
     <div class="step">
@@ -483,6 +746,14 @@
     <li>
       <span class="label">Sortition weights</span>
       <span>How should weighting for Resolutions panels be calibrated? What counts as "meaningful but not total" representation from impacted communities?</span>
+    </li>
+    <li>
+      <span class="label">Sense vote floor</span>
+      <span>What threshold should the federation set as the central floor for sense votes? High enough to genuinely filter the agenda, low enough not to suppress minority concerns.</span>
+    </li>
+    <li>
+      <span class="label">Resolutions process</span>
+      <span>Resolutions does not use the standard meeting flow; it needs its own developmental discussion to work out how panels convene, deliberate, and reach findings.</span>
     </li>
   </ul>
 </section>
