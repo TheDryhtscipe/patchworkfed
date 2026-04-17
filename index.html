@@ -420,6 +420,7 @@ flowchart TB
     P1["Patch A"]
     P2["Patch B"]
     P3["Patch …"]
+    P1 <-.->|transient merger<br/>for dispute| P2
   end
 
   subgraph NATIONAL["National Bodies"]
@@ -438,7 +439,6 @@ flowchart TB
   CONSTRAINTS ==>|gate affiliation| PATCHES
   PATCHES -->|mandated, recallable<br/>delegates| NATIONAL
   PATCHES -->|send delegates| CONF
-  PATCHES <-.->|inter-patch dispute<br/>transient merger| PATCHES
   PATCHES ==>|safeguarding or<br/>kernel violation| RES
 
   CONF -->|mandates strategy| FAC
