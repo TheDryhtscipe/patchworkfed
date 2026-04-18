@@ -1,7 +1,7 @@
-%% Patchwork Federation — meeting process
+%% Patchwork Federation — patch meeting process
 flowchart TB
 
-  subgraph MEETING["At the meeting"]
+  subgraph MEETING["Patch meeting"]
     direction TB
     M(["Member"]) -->|submits motion<br/>in advance| AGENDA["Standing orders<br/><i>compile agenda</i>"]
     AGENDA --> SENSE{{"Sense vote<br/><i>federation floor threshold</i>"}}
@@ -9,10 +9,21 @@ flowchart TB
     SENSE -.->|fails| DROP["Drops off agenda"]
     S1 -->|objection| S2["Step 2<br/>Formal Consent<br/><i>dedicated session</i>"]
     S2 -->|deadlock| S3["Step 3<br/>Ballot"]
-    S1 -->|passes| OUT(["Decision"])
+    S1 -->|passes| OUT(["Local decision<br/>or slow-track motion"])
     S2 -->|consent reached| OUT
     S3 --> OUT
   end
+
+  subgraph FAST["Fast-track escalation (optional)"]
+    direction TB
+    FG1["Passed at Step 2 or Step 3<br/><i>never informal consent alone</i>"]
+    FG2["Patch committee consensus<br/>or unanimous vote"]
+    FG1 --> FG2
+    FG2 --> FOUT(["Fast-track motion<br/>submitted to Congress"])
+  end
+
+  S2 -.may become.-> FG1
+  S3 -.may become.-> FG1
 
   subgraph WG_CYCLE["Working Group cycle"]
     direction TB
@@ -28,6 +39,6 @@ flowchart TB
   classDef process fill:#fff,stroke:#8b2500,stroke-width:1.5px,color:#1a1a1a,stroke-dasharray: 3 3
   classDef muted fill:#f8f6f1,stroke:#d4cfc8,stroke-width:1px,color:#6b6560,stroke-dasharray: 2 2
   class COMM accent
-  class WG,M,AGENDA,OUT body
-  class S1,S2,S3 process
+  class WG,M,AGENDA,OUT,FOUT body
+  class S1,S2,S3,FG1,FG2 process
   class DROP muted

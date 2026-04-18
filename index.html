@@ -133,6 +133,17 @@
     margin-bottom: 0;
   }
 
+  a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+
+  a:hover {
+    text-decoration-thickness: 2px;
+  }
+
   .card {
     background: var(--highlight);
     border-left: 3px solid var(--accent);
@@ -397,10 +408,10 @@
   An alternative to the traditional party model of geographic branches delegating upward through a representative hierarchy. Instead: a federation of autonomous, overlapping groups ("patches") coordinating through shared infrastructure, with a clear separation between fast action and slow deliberation.
 </div>
 
-<!-- STRUCTURAL OVERVIEW -->
+<!-- 0. AT A GLANCE -->
 <section>
   <h2><span class="number">0.</span> At a Glance</h2>
-  <p>Two diagrams. The first shows <em>structure</em>: how patches, national bodies, conference, and Resolutions fit together. The second shows <em>process</em>: the motion-to-working-group cycle and the three-step decision escalation. Click either to enlarge.</p>
+  <p>Three diagrams. The first shows <em>structure</em>: how patches, sections, the Permanent Congress, national bodies, and Resolutions fit together. The second shows the <em>meeting process</em> inside any patch. The third shows how motions move through the <em>Permanent Congress</em> on slow and fast tracks. Click any diagram to enlarge.</p>
 
   <div class="diagram-stack">
 
@@ -423,23 +434,40 @@ flowchart TB
     P1 <-.->|transient merger<br/>for dispute| P2
   end
 
+  subgraph SECTIONS["Sections"]
+    direction LR
+    SX["Section<br/><i>self-governing</i>"]
+  end
+
+  CONGRESS["Permanent Congress<br/><i>ongoing deliberation</i><br/>slow · fast tracks"]
+
   subgraph NATIONAL["National Bodies"]
     direction TB
     FAC["Federation Action Committee<br/><i>patch at federation scale</i>"]
     NATPATCH["Other National Patches<br/><i>voluntary</i>"]
   end
 
-  CONF["Conference<br/><i>annual</i>"]
+  CONF["Conference<br/><i>annual or distributed</i><br/>40% Congress · 30% patches · 30% sections"]
   RES["Resolutions<br/><i>independent track</i>"]
 
   MEMBERS -->|form| PATCHES
+  MEMBERS -->|form| SECTIONS
+  MEMBERS -->|participate in| CONGRESS
   MEMBERS -->|elects at conference<br/>+ recall petition| FAC
   MEMBERS -.->|sortition pool| RES
 
   CONSTRAINTS ==>|gate affiliation| PATCHES
+
+  PATCHES -->|motions| CONGRESS
+  SECTIONS -->|motions| CONGRESS
+  CONGRESS ==>|dissolves into| CONF
+
   PATCHES -->|mandated, recallable<br/>delegates| NATIONAL
-  PATCHES -->|send delegates| CONF
+  PATCHES -->|delegates| CONF
+  SECTIONS -->|delegates| CONF
+
   PATCHES ==>|safeguarding or<br/>kernel violation| RES
+  SECTIONS ==>|safeguarding or<br/>kernel violation| RES
 
   CONF -->|mandates strategy| FAC
   CONF -.->|may raise| KERNEL
@@ -449,8 +477,8 @@ flowchart TB
   classDef accent fill:#f0ebe3,stroke:#8b2500,stroke-width:2px,color:#1a1a1a
   classDef body fill:#f8f6f1,stroke:#1a1a1a,stroke-width:1.5px,color:#1a1a1a
   class KERNEL kernel
-  class PRACTICES,FAC,RES accent
-  class NATPATCH,P1,P2,P3,CONF,MEMBERS body
+  class PRACTICES,FAC,RES,CONGRESS accent
+  class NATPATCH,P1,P2,P3,SX,CONF,MEMBERS body
       </div>
       <div class="diagram-caption">Structure. Solid = ordinary flow. Dashed = reference or discretionary. Bold double = gated or privileged channel.</div>
     </div>
@@ -459,7 +487,7 @@ flowchart TB
       <div class="mermaid">
 flowchart TB
 
-  subgraph MEETING["At the meeting"]
+  subgraph MEETING["Patch meeting"]
     direction TB
     M(["Member"]) -->|submits motion<br/>in advance| AGENDA["Standing orders<br/><i>compile agenda</i>"]
     AGENDA --> SENSE{{"Sense vote<br/><i>federation floor threshold</i>"}}
@@ -467,10 +495,21 @@ flowchart TB
     SENSE -.->|fails| DROP["Drops off agenda"]
     S1 -->|objection| S2["Step 2<br/>Formal Consent<br/><i>dedicated session</i>"]
     S2 -->|deadlock| S3["Step 3<br/>Ballot"]
-    S1 -->|passes| OUT(["Decision"])
+    S1 -->|passes| OUT(["Local decision<br/>or slow-track motion"])
     S2 -->|consent reached| OUT
     S3 --> OUT
   end
+
+  subgraph FAST["Fast-track escalation (optional)"]
+    direction TB
+    FG1["Passed at Step 2 or Step 3<br/><i>never informal consent alone</i>"]
+    FG2["Patch committee consensus<br/>or unanimous vote"]
+    FG1 --> FG2
+    FG2 --> FOUT(["Fast-track motion<br/>submitted to Congress"])
+  end
+
+  S2 -.may become.-> FG1
+  S3 -.may become.-> FG1
 
   subgraph WG_CYCLE["Working Group cycle"]
     direction TB
@@ -486,15 +525,339 @@ flowchart TB
   classDef process fill:#fff,stroke:#8b2500,stroke-width:1.5px,color:#1a1a1a,stroke-dasharray: 3 3
   classDef muted fill:#f8f6f1,stroke:#d4cfc8,stroke-width:1px,color:#6b6560,stroke-dasharray: 2 2
   class COMM accent
-  class WG,M,AGENDA,OUT body
-  class S1,S2,S3 process
+  class WG,M,AGENDA,OUT,FOUT body
+  class S1,S2,S3,FG1,FG2 process
   class DROP muted
       </div>
-      <div class="diagram-caption">Process. Motions submitted in advance hit a sense vote; survivors enter the three-step process. Resolutions does not use this flow — see section 8.</div>
+      <div class="diagram-caption">Meeting process. Fast-track (emergency) submission to Congress requires both a positive vote (formal consent or ballot) and committee consensus — informal consent alone is never enough.</div>
+    </div>
+
+    <div class="diagram" data-zoomable>
+      <div class="mermaid">
+flowchart TB
+  IN(["Motion arrives at<br/>Permanent Congress"])
+  IN --> TRACK{{"Track?"}}
+
+  subgraph SLOW["Slow track"]
+    direction TB
+    SPOLIS["pol.is conversation<br/><i>asynchronous deliberation</i>"]
+    SRESULT["Results presented<br/>to membership"]
+    SPOLIS --> SRESULT
+  end
+
+  subgraph FASTT["Fast track (emergency)"]
+    direction TB
+    FPOLIS["pol.is conversation"]
+    FRESULT["Results presented<br/>to membership"]
+    FVOTE["Direct vote<br/><i>participation-gated:<br/>only those who joined<br/>the conversation</i>"]
+    FPOLIS --> FRESULT --> FVOTE
+  end
+
+  TRACK -->|slow| SPOLIS
+  TRACK -->|fast| FPOLIS
+
+  SRESULT --> NEXT(["Informs federation<br/>strategy and conference"])
+  FVOTE --> DECIDED(["Binding decision"])
+
+  classDef accent fill:#f0ebe3,stroke:#8b2500,stroke-width:2px,color:#1a1a1a
+  classDef body fill:#f8f6f1,stroke:#1a1a1a,stroke-width:1.5px,color:#1a1a1a
+  classDef process fill:#fff,stroke:#8b2500,stroke-width:1.5px,color:#1a1a1a,stroke-dasharray: 3 3
+  class FVOTE accent
+  class IN,SPOLIS,SRESULT,FPOLIS,FRESULT,NEXT,DECIDED body
+  class TRACK process
+      </div>
+      <div class="diagram-caption">Permanent Congress. Slow track deliberates and presents; fast track also votes, with the franchise earned through participation in the deliberation.</div>
     </div>
 
   </div>
 </section>
+
+<hr class="divider">
+
+<!-- 1. THE PATCH -->
+<section>
+  <h2><span class="number">1.</span> The Patch</h2>
+  <p>The basic unit of the federation is not a geographic branch but a <strong>patch</strong>: any self-governing group of people in ongoing political relationship with each other. A workplace group, a tenants' association, a campaign group, or a pre-existing protobranch originally formed for Your Party.</p>
+  <p>Patches are defined by social relationships and shared practice, not by territory. They can overlap: one person may belong to several patches. They do not need to be geographically contiguous.</p>
+
+  <div class="card">
+    <h3>Affiliation criteria</h3>
+    <p>To affiliate with the federation, a patch must meet common practices (see section 7) and adhere to the ethical kernel (see section 8). The criteria are structural and behavioural, not ideological beyond the kernel. Politically diverse groups can federate without splitting over theoretical disagreements that have no operational consequence.</p>
+  </div>
+
+  <div class="card">
+    <h3>Patch governance</h3>
+    <p>Each patch has a committee (its slow, deliberative body) which requires at minimum a chair, a secretary, and a treasurer (any or all of which may be held as co-roles). Beyond these core roles, patches may define additional officer roles as they see fit. The precise shape of patch governance can vary; the common practices (section 7) set the floor, not the ceiling.</p>
+    <p>All committees must be majority lay members: people who do not hold officer or working group lead roles on that committee. This applies at every level, including the FAC, and prevents committees from becoming self-referential bodies of officeholders detached from the membership they serve.</p>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 2. FAST & SLOW -->
+<section>
+  <h2><span class="number">2.</span> Fast and Slow</h2>
+  <p>The federation distinguishes between two modes of operation, borrowed from how effective organisations actually function.</p>
+
+  <div class="two-col">
+    <div class="col">
+      <div class="col-header">Fast: Working Groups</div>
+      <p>Do actual work. Campaign, organise, produce materials, respond to events. Form across patches as needed. Operate mostly by informal consent. Time-limited and task-specific.</p>
+    </div>
+    <div class="col">
+      <div class="col-header">Slow: Committees</div>
+      <p>Deliberate on what working groups bring them. Set strategic direction. Review and ratify. May be thematic, geographic, or both, depending on what's actually needed.</p>
+    </div>
+  </div>
+
+  <p>Neither body is "above" the other. The committee does not command the working group; it reviews and ratifies. The working group does not bypass the committee; it reports back. Sometimes the same people sit in both.</p>
+
+  <div class="card">
+    <h3>Motions and working groups</h3>
+    <p>A member submits a motion to their patch committee. It is then heard at the next patch meeting, and if the patch consents, the committee creates a working group with a specific remit and a specific time window for action. The time window can be renewed, but it must be explicitly renewed; there is no indefinite mandate. The working group reports back to the committee, which deliberates on the outcome.</p>
+  </div>
+
+  <div class="card">
+    <h3>Emergency decisions</h3>
+    <p>Patch committees (including the FAC) can make emergency decisions between meetings when circumstances demand it. However, they must answer for those decisions at the next patch meeting. Members can challenge emergency decisions through the three-step process, and committee members who made them are subject to recall under the same conditions as FAC members: petition from the membership with a reasonable threshold.</p>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 3. MEETINGS AND THREE-STEP PROCESS -->
+<section>
+  <h2><span class="number">3.</span> Meetings and the Three-Step Process</h2>
+  <p>Meetings combine a lightweight agenda-filter borrowed from <em>Martha's Rules</em> with the three-step process. Motions are submitted in advance according to the patch's standing orders. At the meeting, each motion is <strong>sense voted</strong>: a quick show of support that determines whether the motion is worth the body's deliberative time. Motions that pass the sense vote enter the three-step process. Those that fail drop off the agenda.</p>
+
+  <div class="card">
+    <h3>Sense vote threshold</h3>
+    <p>The federation sets a <strong>floor threshold</strong> for the sense vote centrally. Patches may adopt a higher threshold, never a lower one. This prevents patches from effectively disabling agenda-filtering while preserving their freedom to set a stricter bar.</p>
+  </div>
+
+  <div class="card">
+    <h3>Local and national motions</h3>
+    <p>Local motions and national motions follow the same path at the patch: submitted in advance, sense voted, then worked through the three-step process. A motion intended for the Permanent Congress is handled by the patch in the same way as a motion that will only affect the patch itself.</p>
+  </div>
+
+  <div class="card">
+    <h3>Fast-track (emergency) motions to Congress</h3>
+    <p>A patch submitting an emergency motion to the Permanent Congress must clear a higher bar than ordinary slow-track submission. Two conditions must both be met:</p>
+    <p><strong>A positive vote of the patch.</strong> The motion must pass via formal consent (Step 2) or by majority ballot (Step 3). Informal consent alone is not sufficient — an emergency motion cannot ride on silence or absence of objection.</p>
+    <p><strong>Consensus of the patch committee.</strong> The committee must reach consensus, or pass by unanimous vote, that the motion is genuinely fast-track. This gates the emergency framing itself.</p>
+    <p>Slow-track motions carry no such extra bar; they can pass the patch by ordinary three-step process including informal consent.</p>
+  </div>
+
+  <div class="card">
+    <h3>Ballots (Step 3)</h3>
+    <p>When a motion or other single-winner decision reaches Step 3, the ballot is resolved using the <a href="https://en.wikipedia.org/wiki/Schulze_method">Schulze method</a>. A Condorcet-compliant ranked method that resists tactical voting and produces a clear winner from full preference data.</p>
+  </div>
+
+  <div class="card">
+    <h3>Elections</h3>
+    <p>Multi-winner elections — the FAC, patch committees with multiple contested seats, and any other body elected rather than appointed — use <a href="https://en.wikipedia.org/wiki/Counting_single_transferable_votes#Meek's_method">STV with Meek's method</a>. Proportional, surplus-handling, and keeps the count coherent under quota transfers.</p>
+  </div>
+
+  <p>All deliberative bodies use this process, except Resolutions (see section 9). Most decisions resolve at step one. The heavier machinery exists but is rarely needed.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">Step 1</div>
+      <div class="step-title">Informal Consent</div>
+      <div class="step-desc">Discussion until no one objects. The default mode. Fast, low-friction, sufficient for the vast majority of decisions.</div>
+    </div>
+    <div class="arrow"><span>→</span></div>
+    <div class="step">
+      <div class="step-num">Step 2</div>
+      <div class="step-title">Formal Consent</div>
+      <div class="step-desc">Structured facilitation of the disagreement. If deadlock persists, escalates.</div>
+    </div>
+    <div class="arrow"><span>→</span></div>
+    <div class="step">
+      <div class="step-num">Step 3</div>
+      <div class="step-title">Ballot</div>
+      <div class="step-desc">A deciding vote. The result carries legitimacy because deliberation has visibly occurred first.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 4. NATIONAL BODIES -->
+<section>
+  <h2><span class="number">4.</span> National Bodies</h2>
+  <p>The federation operates national-level patches for coordination across the whole organisation. With the exception of the Federation Action Committee, participation in national patches is voluntary.</p>
+
+  <div class="card">
+    <h3>The Federation Action Committee (FAC)</h3>
+    <p>The FAC is itself a patch: the committee of a national-level patch whose members are elected at conference. It operates the same way as any other patch committee (chair, secretary, treasurer; motions; three-step process), just at federation scale.</p>
+    <p>The FAC's permanent working groups handle the federation's ongoing functions: communications, membership, finance, and so on. These are created and renewed by motions to the FAC in the normal way.</p>
+    <p>The FAC is empowered to act rapidly in emergency circumstances: issuing statements, condemning atrocities, calling for urgent campaigns (e.g. against hostile legislation), demanding government action on crises. It also carries out the general strategic direction set at the General Strategy Plenary (see section 6). It is not empowered to set policy or strategy on its own initiative.</p>
+    <p>The exact size and composition of the FAC is to be decided at the inaugural conference. FAC members are subject to recall by petition from the membership, with a reasonable threshold. The federation must provide the infrastructure for members to submit recall petitions.</p>
+  </div>
+
+  <p>Other national patches are voluntary coordination bodies, thematic or functional, that exist to facilitate cooperation across the federation. They follow the same model as any other patch: committee, working groups, motions, three-step process.</p>
+
+  <div class="card">
+    <h3>Sections</h3>
+    <p>Sections are national-scope bodies for marginalised communities: disabled people, LGBTQIA+ people, racially marginalised people, and others. They operate like patches (committee, working groups, motions, three-step process) but exist to provide autonomous political space at national level for people whose concerns would otherwise be scattered across local patches where they may be in a small minority.</p>
+    <p>Sections set their own agendas and speak with their own voice. They are not advisory bodies to the FAC; they are self-governing formations with direct representation at conference (see section 6).</p>
+  </div>
+
+  <p>Delegates to any national body are mandated and instantly recallable by the patch or body that sent them.</p>
+</section>
+
+<hr class="divider">
+
+<!-- 5. PERMANENT CONGRESS -->
+<section>
+  <h2><span class="number">5.</span> The Permanent Congress</h2>
+  <p>The Permanent Congress is the federation's ongoing deliberative body. It is composed of its participants: any federation member who participates in its processes has standing within it. It is supported by a specialist volunteer working group from the FAC.</p>
+  <p>Motions arise from patches and reach the Permanent Congress through two tracks:</p>
+
+  <div class="two-col">
+    <div class="col">
+      <div class="col-header">Slow Track</div>
+      <p>Standard motions from patches. The Permanent Congress creates pol.is conversations from these motions, allowing the membership to deliberate asynchronously. Results are then presented to the membership.</p>
+    </div>
+    <div class="col">
+      <div class="col-header">Fast Track</div>
+      <p>Emergency motions from patches. The Permanent Congress creates pol.is conversations, presents results to the membership, and directly votes on the motion. Voting on fast-track motions is limited to those who participated in the conversation.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Participation as franchise</h3>
+    <p>The right to vote on emergency motions is earned through participation in the deliberation, not granted by position or seniority. This means the people deciding urgent questions are the people who engaged with them, not a fixed representative body voting on matters they may not have considered.</p>
+  </div>
+
+  <div class="card">
+    <h3>Congress and conference access</h3>
+    <p>Participation in the Permanent Congress is the primary route to conference. Congress participants are the first to be invited. Conference has a set attendance ceiling, determined at each conference (or at each year's first gathering under Track B) for the following year. This creates a direct incentive to participate in the federation's deliberative processes year-round, rather than treating conference as the only moment of engagement. See section 6 for the full allocation.</p>
+  </div>
+
+  <p>The Permanent Congress temporarily dissolves to create the Party Conference (see section 6).</p>
+</section>
+
+<hr class="divider">
+
+<!-- 6. CONFERENCE -->
+<section>
+  <h2><span class="number">6.</span> Conference</h2>
+  <p>The Permanent Congress dissolves to become Conference. Because patches can produce binding decisions through their own deliberative processes, and the Permanent Congress handles ongoing motions year-round, conference is freed from the bottleneck of being the only place where policy happens.</p>
+  <p>This proposal offers two possible tracks for how conference operates. Either is compatible with the rest of the federation model. The founding membership should decide which to adopt.</p>
+
+  <div class="card">
+    <h3>Track A: Annual Conference</h3>
+    <p>One annual physical gathering, focused on three things:</p>
+    <p><strong>General Strategy Plenary.</strong> The core deliberative session. Sets the broad strategic direction for the federation, which the FAC is then mandated to carry out. Policy decisions are made directly here.</p>
+    <p><strong>Ethical Kernel Review.</strong> The only venue where expansions (never reductions) to the ethical kernel can be proposed and ratified.</p>
+    <p><strong>Inside Out.</strong> The fringe becomes the core. Educational sessions, training, and political debates led by various patches. Conference as a site of learning and political development, not just administration.</p>
+  </div>
+
+  <div class="card">
+    <h3>Track B: Distributed Gatherings</h3>
+    <p>Instead of one annual conference trying to do everything, the federation holds several smaller gatherings per year (three as a baseline, giving roughly four months' lead time for each). Each gathering is focused on a specific policy area or strategic question.</p>
+    <p>Sections, patches, and the FAC propose a combined list of topics each year. If the list is longer than three gatherings can accommodate, it is prioritised through the Permanent Congress.</p>
+    <p>Any gathering can, if a topic requires further discussion, vote to hold one or more hybrid follow-up gatherings. These feed their findings back to the Permanent Congress.</p>
+    <p>The Ethical Kernel Review takes place at one designated gathering per year.</p>
+  </div>
+
+  <p>Under either track, conference places are allocated as follows: <strong>40%</strong> Permanent Congress participants, <strong>30%</strong> patch delegates, <strong>30%</strong> section delegates.</p>
+</section>
+
+<hr class="divider">
+
+<!-- 7. COMMON PRACTICES -->
+<section>
+  <h2><span class="number">7.</span> Common Practices</h2>
+  <p>The federation does not impose uniformity on its patches. However, all affiliated patches must meet shared minimum standards in the following areas:</p>
+
+  <ul class="common-list">
+    <li>
+      <span class="label">Democracy</span>
+      <span>Internal decision-making must be genuinely democratic. If a patch isn't internally democratic, its delegates don't represent anyone and the federation's legitimacy collapses.</span>
+    </li>
+    <li>
+      <span class="label">Safeguarding</span>
+      <span>Consistent safeguarding practices across all patches, so that vulnerable people are protected regardless of which patch they are in or move between.</span>
+    </li>
+    <li>
+      <span class="label">Legal compliance</span>
+      <span>The federation exists in the real world and must meet its legal obligations.</span>
+    </li>
+  </ul>
+</section>
+
+<hr class="divider">
+
+<!-- 8. ETHICAL KERNEL -->
+<section>
+  <h2><span class="number">8.</span> The Ethical Kernel</h2>
+
+  <div class="kernel-box">
+    <h3>Foundational principle</h3>
+    <p>The ethical kernel defines the non-negotiable ethical commitments of the federation. It can be modified only to <em>raise</em> the bar, never to lower it. Patches may hold stronger ethical commitments than the kernel requires, but none may fall below it.</p>
+  </div>
+
+  <p>The kernel is what makes the federation more than a mailing list. It defines who is in and who is out on ethical, not ideological, grounds. A patch that platforms transphobes, engages in rape apologia, or promotes racism is in violation of the kernel regardless of its other political positions.</p>
+</section>
+
+<hr class="divider">
+
+<!-- 9. DISPUTE RESOLUTION -->
+<section>
+  <h2><span class="number">9.</span> Dispute Resolution</h2>
+  <p>Disputes between patches are resolved by <strong>transient merger</strong>: the disputing patches temporarily become a single deliberative body and resolve the disagreement together using the three-step process. They de-merge afterward. Neither patch is absorbed or subordinated.</p>
+  <p>This prevents the pathology where disputes escalate because two groups are talking <em>about</em> each other rather than <em>to</em> each other.</p>
+
+  <div class="card">
+    <h3>Exception: Resolutions</h3>
+    <p>Safeguarding concerns and ethical kernel violations do not go through the normal dispute process. These are handled by <strong>Resolutions</strong>, a structurally independent body. Safeguarding disputes are allegations of harm, not political disagreements between peers, and require a different process that does not ask those who have been harmed to share a deliberative space with those who have harmed them.</p>
+    <p>Resolutions panels are majority sortitioned (drawn by lot from the membership), with an elected officer core forming the committee. When a case concerns a specific form of oppression (e.g. anti-Black racism, transphobia), the sortition is weighted to ensure representation from the community impacted. The weighting should be meaningful but not total: the panel must be broadly representative while centring the experience of those most affected.</p>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- REMAINING QUESTIONS -->
+<section>
+  <h2>For Further Discussion</h2>
+  <p>The following are deliberately left open for the founding membership to resolve, either at the inaugural conference or through the federation's own processes once established.</p>
+
+  <ul class="common-list">
+    <li>
+      <span class="label">Ethical kernel</span>
+      <span>What specific commitments belong in the kernel? This is a political question for the founding membership, not a design question.</span>
+    </li>
+    <li>
+      <span class="label">FAC composition</span>
+      <span>How many members? What balance of roles? To be decided at the inaugural conference.</span>
+    </li>
+    <li>
+      <span class="label">Recall threshold</span>
+      <span>What constitutes a "reasonable bar" for recall petitions? High enough to prevent frivolous use, low enough to be a real accountability mechanism.</span>
+    </li>
+    <li>
+      <span class="label">Sortition weights</span>
+      <span>How should weighting for Resolutions panels be calibrated? What counts as "meaningful but not total" representation from impacted communities?</span>
+    </li>
+    <li>
+      <span class="label">Sense vote floor</span>
+      <span>What threshold should the federation set as the central floor for sense votes? High enough to genuinely filter the agenda, low enough not to suppress minority concerns.</span>
+    </li>
+    <li>
+      <span class="label">Conference track</span>
+      <span>Track A (annual conference) or Track B (distributed gatherings)? The founding membership should decide which to adopt.</span>
+    </li>
+    <li>
+      <span class="label">Resolutions process</span>
+      <span>Resolutions does not use the standard meeting flow; it needs its own developmental discussion to work out how panels convene, deliberate, and reach findings.</span>
+    </li>
+  </ul>
+</section>
+
+</div>
 
 <div class="lightbox" id="lightbox" aria-hidden="true">
   <button class="lightbox-close" aria-label="Close">×</button>
@@ -540,224 +903,5 @@ flowchart TB
   })();
 </script>
 
-<hr class="divider">
-
-<!-- 1. THE PATCH -->
-<section>
-  <h2><span class="number">1.</span> The Patch</h2>
-  <p>The basic unit of the federation is not a geographic branch but a <strong>patch</strong>: any self-governing group of people in ongoing political relationship with each other. A workplace group, a tenants' association, a campaign group, or a pre-existing protobranch originally formed for Your Party.</p>
-  <p>Patches are defined by social relationships and shared practice, not by territory. They can overlap: one person may belong to several patches. They do not need to be geographically contiguous.</p>
-
-  <div class="card">
-    <h3>Affiliation criteria</h3>
-    <p>To affiliate with the federation, a patch must meet common practices (see section 6) and adhere to the ethical kernel (see section 7). The criteria are structural and behavioural, not ideological beyond the kernel. Politically diverse groups can federate without splitting over theoretical disagreements that have no operational consequence.</p>
-  </div>
-
-  <div class="card">
-    <h3>Patch governance</h3>
-    <p>Each patch has a committee (its slow, deliberative body) which requires at minimum a chair, a secretary, and a treasurer (any or all of which may be held as co-roles). Beyond these core roles, patches may define additional officer roles as they see fit. The precise shape of patch governance can vary; the common practices (section 6) set the floor, not the ceiling.</p>
-    <p>All committees must be majority lay members: people who do not hold officer or working group lead roles on that committee. This applies at every level, including the FAC, and prevents committees from becoming self-referential bodies of officeholders detached from the membership they serve.</p>
-  </div>
-</section>
-
-<hr class="divider">
-
-<!-- 2. FAST & SLOW -->
-<section>
-  <h2><span class="number">2.</span> Fast and Slow</h2>
-  <p>The federation distinguishes between two modes of operation, borrowed from how effective organisations actually function.</p>
-
-  <div class="two-col">
-    <div class="col">
-      <div class="col-header">Fast: Working Groups</div>
-      <p>Do actual work. Campaign, organise, produce materials, respond to events. Form across patches as needed. Operate mostly by informal consent. Time-limited and task-specific.</p>
-    </div>
-    <div class="col">
-      <div class="col-header">Slow: Committees</div>
-      <p>Deliberate on what working groups bring them. Set strategic direction. Review and ratify. May be thematic, geographic, or both, depending on what's actually needed.</p>
-    </div>
-  </div>
-
-  <p>Neither body is "above" the other. The committee does not command the working group; it reviews and ratifies. The working group does not bypass the committee; it reports back. Sometimes the same people sit in both.</p>
-
-  <div class="card">
-    <h3>Motions and working groups</h3>
-    <p>A member submits a motion to their patch committee. It is then heard at the next patch meeting, and if the patch consents, the committee creates a working group with a specific remit and a specific time window for action. The time window can be renewed, but it must be explicitly renewed; there is no indefinite mandate. The working group reports back to the committee, which deliberates on the outcome.</p>
-  </div>
-
-  <div class="card">
-    <h3>Emergency decisions</h3>
-    <p>Patch committees (including the FAC) can make emergency decisions between meetings when circumstances demand it. However, they must answer for those decisions at the next patch meeting. Members can challenge emergency decisions through the three-step process, and committee members who made them are subject to recall under the same conditions as FAC members: petition from the membership with a reasonable threshold.</p>
-  </div>
-</section>
-
-<hr class="divider">
-
-<!-- 3. THREE STEPS -->
-<section>
-  <h2><span class="number">3.</span> Meetings and the Three-Step Process</h2>
-  <p>Meetings combine a lightweight agenda-filter borrowed from <em>Martha's Rules</em> with the three-step process. Motions are submitted in advance according to the patch's standing orders. At the meeting, each motion is <strong>sense voted</strong>: a quick show of support that determines whether the motion is worth the body's deliberative time. Motions that pass the sense vote enter the three-step process. Those that fail drop off the agenda.</p>
-
-  <div class="card">
-    <h3>Sense vote threshold</h3>
-    <p>The federation sets a <strong>floor threshold</strong> for the sense vote centrally. Patches may adopt a higher threshold, never a lower one. This prevents patches from effectively disabling agenda-filtering while preserving their freedom to set a stricter bar.</p>
-  </div>
-
-  <p>All deliberative bodies use this process, except Resolutions (see section 8). Most decisions resolve at step one. The heavier machinery exists but is rarely needed.</p>
-
-  <div class="steps">
-    <div class="step">
-      <div class="step-num">Step 1</div>
-      <div class="step-title">Informal Consent</div>
-      <div class="step-desc">Discussion until no one objects. The default mode. Fast, low-friction, sufficient for the vast majority of decisions.</div>
-    </div>
-    <div class="arrow"><span>→</span></div>
-    <div class="step">
-      <div class="step-num">Step 2</div>
-      <div class="step-title">Formal Consent</div>
-      <div class="step-desc">Structured facilitation of the disagreement. If deadlock persists, escalates.</div>
-    </div>
-    <div class="arrow"><span>→</span></div>
-    <div class="step">
-      <div class="step-num">Step 3</div>
-      <div class="step-title">Ballot</div>
-      <div class="step-desc">A deciding vote. The result carries legitimacy because deliberation has visibly occurred first.</div>
-    </div>
-  </div>
-</section>
-
-<hr class="divider">
-
-<!-- 4. NATIONAL BODIES -->
-<section>
-  <h2><span class="number">4.</span> National Bodies</h2>
-  <p>The federation operates national-level patches for coordination across the whole organisation. With the exception of the Federation Action Committee, participation in national patches is voluntary.</p>
-
-  <div class="card">
-    <h3>The Federation Action Committee (FAC)</h3>
-    <p>The FAC is itself a patch: the committee of a national-level patch whose members are elected at conference. It operates the same way as any other patch committee (chair, secretary, treasurer; motions; three-step process), just at federation scale.</p>
-    <p>The FAC's permanent working groups handle the federation's ongoing functions: communications, membership, finance, and so on. These are created and renewed by motions to the FAC in the normal way.</p>
-    <p>The FAC is empowered to act rapidly in emergency circumstances: issuing statements, condemning atrocities, calling for urgent campaigns (e.g. against hostile legislation), demanding government action on crises. It also carries out the general strategic direction set at the General Strategy Plenary (see section 5). It is not empowered to set policy or strategy on its own initiative.</p>
-    <p>The exact size and composition of the FAC is to be decided at the inaugural conference. FAC members are subject to recall by petition from the membership, with a reasonable threshold. The federation must provide the infrastructure for members to submit recall petitions.</p>
-  </div>
-
-  <p>Other national patches are voluntary coordination bodies, thematic or functional, that exist to facilitate cooperation across the federation. They follow the same model as any other patch: committee, working groups, motions, three-step process.</p>
-  <p>Delegates to any national body are mandated and instantly recallable by the patch or body that sent them.</p>
-</section>
-
-<hr class="divider">
-
-<!-- 5. CONFERENCE -->
-<section>
-  <h2><span class="number">5.</span> Conference</h2>
-  <p>Because patches can produce binding decisions through their own deliberative processes without waiting for an annual gathering, conference is freed from the bottleneck of being the only place where policy happens. Instead, conference focuses on three things:</p>
-
-  <div class="two-col" style="grid-template-columns: 1fr;">
-    <div class="col">
-      <div class="col-header">General Strategy Plenary</div>
-      <p>The core deliberative session. Sets the broad strategic direction for the federation, which the FAC is then mandated to carry out. Policy decisions are made directly here.</p>
-    </div>
-  </div>
-  <div class="two-col">
-    <div class="col">
-      <div class="col-header">Ethical Kernel Review</div>
-      <p>The only venue where expansions (never reductions) to the ethical kernel can be proposed and ratified.</p>
-    </div>
-    <div class="col">
-      <div class="col-header">Inside Out</div>
-      <p>The fringe becomes the core. Educational sessions, training, and political debates led by various patches. Conference as a site of learning and political development, not just administration.</p>
-    </div>
-  </div>
-</section>
-
-<hr class="divider">
-
-<!-- 6. COMMON PRACTICES -->
-<section>
-  <h2><span class="number">6.</span> Common Practices</h2>
-  <p>The federation does not impose uniformity on its patches. However, all affiliated patches must meet shared minimum standards in the following areas:</p>
-
-  <ul class="common-list">
-    <li>
-      <span class="label">Democracy</span>
-      <span>Internal decision-making must be genuinely democratic. If a patch isn't internally democratic, its delegates don't represent anyone and the federation's legitimacy collapses.</span>
-    </li>
-    <li>
-      <span class="label">Safeguarding</span>
-      <span>Consistent safeguarding practices across all patches, so that vulnerable people are protected regardless of which patch they are in or move between.</span>
-    </li>
-    <li>
-      <span class="label">Legal compliance</span>
-      <span>The federation exists in the real world and must meet its legal obligations.</span>
-    </li>
-  </ul>
-</section>
-
-<hr class="divider">
-
-<!-- 7. ETHICAL KERNEL -->
-<section>
-  <h2><span class="number">7.</span> The Ethical Kernel</h2>
-
-  <div class="kernel-box">
-    <h3>Foundational principle</h3>
-    <p>The ethical kernel defines the non-negotiable ethical commitments of the federation. It can be modified only to <em>raise</em> the bar, never to lower it. Patches may hold stronger ethical commitments than the kernel requires, but none may fall below it.</p>
-  </div>
-
-  <p>The kernel is what makes the federation more than a mailing list. It defines who is in and who is out on ethical, not ideological, grounds. A patch that for example platforms transphobes, or allows or promotes racism or sexism, is in violation of the kernel regardless of its other political positions.</p>
-</section>
-
-<hr class="divider">
-
-<!-- 8. DISPUTE RESOLUTION -->
-<section>
-  <h2><span class="number">8.</span> Dispute Resolution</h2>
-  <p>Disputes between patches are resolved by <strong>transient merger</strong>: the disputing patches temporarily become a single deliberative body and resolve the disagreement together using the three-step process. They de-merge afterward. Neither patch is absorbed or subordinated.</p>
-  <p>Talking about unity is a fine thing. Practicing it is even better.</p>
-  <p>However, in extreme cases, Resolutions can mediate between patches.</p>
-
-  <div class="card">
-    <h3>Exception: Resolutions</h3>
-    <p>Safeguarding concerns and ethical kernel violations do not go through the normal dispute process. These are handled by <strong>Resolutions</strong>, a structurally independent body. Safeguarding disputes are allegations of harm, not political disagreements between peers, and require a different process that does not ask those who have been harmed to share a deliberative space with those who have harmed them.</p>
-    <p>Resolutions panels are majority sortitioned (drawn by lot from the membership), with an elected officer core forming the committee. When a case concerns a specific form of oppression (e.g. anti-Black racism, transphobia), the sortition is weighted to ensure representation from the community impacted. The weighting should be meaningful but not total: the panel must be broadly representative while centring the experience of those most affected.</p>
-  </div>
-</section>
-
-<hr class="divider">
-
-<!-- REMAINING QUESTIONS -->
-<section>
-  <h2>For Further Discussion</h2>
-  <p>The following are deliberately left open for the founding membership to resolve, either at the inaugural conference or through the federation's own processes once established.</p>
-
-  <ul class="common-list">
-    <li>
-      <span class="label">Ethical kernel</span>
-      <span>What specific commitments belong in the kernel? This is a political question for the founding membership, not a design question.</span>
-    </li>
-    <li>
-      <span class="label">FAC composition</span>
-      <span>How many members? What balance of roles? To be decided at the inaugural conference.</span>
-    </li>
-    <li>
-      <span class="label">Recall threshold</span>
-      <span>What constitutes a "reasonable bar" for recall petitions? High enough to prevent frivolous use, low enough to be a real accountability mechanism.</span>
-    </li>
-    <li>
-      <span class="label">Sortition weights</span>
-      <span>How should weighting for Resolutions panels be calibrated? What counts as "meaningful but not total" representation from impacted communities?</span>
-    </li>
-    <li>
-      <span class="label">Sense vote floor</span>
-      <span>What threshold should the federation set as the central floor for sense votes? High enough to genuinely filter the agenda, low enough not to suppress minority concerns.</span>
-    </li>
-    <li>
-      <span class="label">Resolutions process</span>
-      <span>Resolutions does not use the standard meeting flow; it needs its own developmental discussion to work out how panels convene, deliberate, and reach findings.</span>
-    </li>
-  </ul>
-</section>
-
-</div>
 </body>
 </html>

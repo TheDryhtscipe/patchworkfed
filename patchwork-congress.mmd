@@ -1,0 +1,32 @@
+%% Patchwork Federation — Permanent Congress tracks
+flowchart TB
+  IN(["Motion arrives at<br/>Permanent Congress"])
+  IN --> TRACK{{"Track?"}}
+
+  subgraph SLOW["Slow track"]
+    direction TB
+    SPOLIS["pol.is conversation<br/><i>asynchronous deliberation</i>"]
+    SRESULT["Results presented<br/>to membership"]
+    SPOLIS --> SRESULT
+  end
+
+  subgraph FASTT["Fast track (emergency)"]
+    direction TB
+    FPOLIS["pol.is conversation"]
+    FRESULT["Results presented<br/>to membership"]
+    FVOTE["Direct vote<br/><i>participation-gated:<br/>only those who joined<br/>the conversation</i>"]
+    FPOLIS --> FRESULT --> FVOTE
+  end
+
+  TRACK -->|slow| SPOLIS
+  TRACK -->|fast| FPOLIS
+
+  SRESULT --> NEXT(["Informs federation<br/>strategy and conference"])
+  FVOTE --> DECIDED(["Binding decision"])
+
+  classDef accent fill:#f0ebe3,stroke:#8b2500,stroke-width:2px,color:#1a1a1a
+  classDef body fill:#f8f6f1,stroke:#1a1a1a,stroke-width:1.5px,color:#1a1a1a
+  classDef process fill:#fff,stroke:#8b2500,stroke-width:1.5px,color:#1a1a1a,stroke-dasharray: 3 3
+  class FVOTE accent
+  class IN,SPOLIS,SRESULT,FPOLIS,FRESULT,NEXT,DECIDED body
+  class TRACK process
