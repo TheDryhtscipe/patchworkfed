@@ -4,7 +4,7 @@ flowchart TB
 
   subgraph CONSTRAINTS[" "]
     direction TB
-    KERNEL["Ethical Kernel<br/><i>raise-only floor</i>"]
+    KERNEL["Ethical Kernel<br/>raise-only floor"]
     PRACTICES["Common Practices<br/>democracy · safeguarding · legal"]
   end
 
@@ -18,19 +18,19 @@ flowchart TB
 
   subgraph SECTIONS["Sections"]
     direction LR
-    SX["Section<br/><i>self-governing</i>"]
+    SX["Section<br/>self-governing"]
   end
 
-  CONGRESS["Permanent Congress<br/><i>ongoing deliberation</i><br/>slow · fast tracks"]
+  CONGRESS["Permanent Congress<br/>ongoing deliberation<br/>slow · fast tracks"]
 
   subgraph NATIONAL["National Bodies"]
     direction TB
-    FAC["Federation Action Committee<br/><i>patch at federation scale</i>"]
-    NATPATCH["Other National Patches<br/><i>voluntary</i>"]
+    FAC["Federation Action Committee<br/>patch at federation scale"]
+    NATPATCH["Other National Patches<br/>voluntary"]
   end
 
-  CONF["Conference<br/><i>annual or distributed</i><br/>40% Congress · 30% patches · 30% sections"]
-  RES["Resolutions<br/><i>independent track</i>"]
+  CONF["Conference<br/>annual or distributed"]
+  RES["Resolutions<br/>independent track"]
 
   MEMBERS -->|form| PATCHES
   MEMBERS -->|form| SECTIONS
@@ -42,11 +42,11 @@ flowchart TB
 
   PATCHES -->|motions| CONGRESS
   SECTIONS -->|motions| CONGRESS
-  CONGRESS ==>|dissolves into| CONF
+  CONGRESS ==>|40% seats<br/>dissolves into| CONF
 
   PATCHES -->|mandated, recallable<br/>delegates| NATIONAL
-  PATCHES -->|delegates| CONF
-  SECTIONS -->|delegates| CONF
+  PATCHES -->|30% seats| CONF
+  SECTIONS -->|30% seats| CONF
 
   PATCHES ==>|safeguarding or<br/>kernel violation| RES
   SECTIONS ==>|safeguarding or<br/>kernel violation| RES

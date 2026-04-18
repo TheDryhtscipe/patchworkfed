@@ -5,7 +5,7 @@ flowchart TB
 
   subgraph SLOW["Slow track"]
     direction TB
-    SPOLIS["pol.is conversation<br/><i>asynchronous deliberation</i>"]
+    SPOLIS["pol.is conversation<br/>asynchronous deliberation"]
     SRESULT["Results presented<br/>to membership"]
     SPOLIS --> SRESULT
   end
@@ -14,7 +14,7 @@ flowchart TB
     direction TB
     FPOLIS["pol.is conversation"]
     FRESULT["Results presented<br/>to membership"]
-    FVOTE["Direct vote<br/><i>participation-gated:<br/>only those who joined<br/>the conversation</i>"]
+    FVOTE["Direct vote<br/>only conversation<br/>participants may vote"]
     FPOLIS --> FRESULT --> FVOTE
   end
 

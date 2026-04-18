@@ -422,7 +422,7 @@ flowchart TB
 
   subgraph CONSTRAINTS[" "]
     direction TB
-    KERNEL["Ethical Kernel<br/><i>raise-only floor</i>"]
+    KERNEL["Ethical Kernel<br/>raise-only floor"]
     PRACTICES["Common Practices<br/>democracy · safeguarding · legal"]
   end
 
@@ -436,19 +436,19 @@ flowchart TB
 
   subgraph SECTIONS["Sections"]
     direction LR
-    SX["Section<br/><i>self-governing</i>"]
+    SX["Section<br/>self-governing"]
   end
 
-  CONGRESS["Permanent Congress<br/><i>ongoing deliberation</i><br/>slow · fast tracks"]
+  CONGRESS["Permanent Congress<br/>ongoing deliberation<br/>slow · fast tracks"]
 
   subgraph NATIONAL["National Bodies"]
     direction TB
-    FAC["Federation Action Committee<br/><i>patch at federation scale</i>"]
-    NATPATCH["Other National Patches<br/><i>voluntary</i>"]
+    FAC["Federation Action Committee<br/>patch at federation scale"]
+    NATPATCH["Other National Patches<br/>voluntary"]
   end
 
-  CONF["Conference<br/><i>annual or distributed</i><br/>40% Congress · 30% patches · 30% sections"]
-  RES["Resolutions<br/><i>independent track</i>"]
+  CONF["Conference<br/>annual or distributed"]
+  RES["Resolutions<br/>independent track"]
 
   MEMBERS -->|form| PATCHES
   MEMBERS -->|form| SECTIONS
@@ -460,11 +460,11 @@ flowchart TB
 
   PATCHES -->|motions| CONGRESS
   SECTIONS -->|motions| CONGRESS
-  CONGRESS ==>|dissolves into| CONF
+  CONGRESS ==>|40% seats<br/>dissolves into| CONF
 
   PATCHES -->|mandated, recallable<br/>delegates| NATIONAL
-  PATCHES -->|delegates| CONF
-  SECTIONS -->|delegates| CONF
+  PATCHES -->|30% seats| CONF
+  SECTIONS -->|30% seats| CONF
 
   PATCHES ==>|safeguarding or<br/>kernel violation| RES
   SECTIONS ==>|safeguarding or<br/>kernel violation| RES
@@ -489,11 +489,11 @@ flowchart TB
 
   subgraph MEETING["Patch meeting"]
     direction TB
-    M(["Member"]) -->|submits motion<br/>in advance| AGENDA["Standing orders<br/><i>compile agenda</i>"]
-    AGENDA --> SENSE{{"Sense vote<br/><i>federation floor threshold</i>"}}
+    M(["Member"]) -->|submits motion<br/>in advance| AGENDA["Standing orders<br/>compile agenda"]
+    AGENDA --> SENSE{{"Sense vote<br/>federation floor threshold"}}
     SENSE -->|passes| S1["Step 1<br/>Informal Consent"]
     SENSE -.->|fails| DROP["Drops off agenda"]
-    S1 -->|objection| S2["Step 2<br/>Formal Consent<br/><i>dedicated session</i>"]
+    S1 -->|objection| S2["Step 2<br/>Formal Consent<br/>dedicated session"]
     S2 -->|deadlock| S3["Step 3<br/>Ballot"]
     S1 -->|passes| OUT(["Local decision<br/>or slow-track motion"])
     S2 -->|consent reached| OUT
@@ -502,7 +502,7 @@ flowchart TB
 
   subgraph FAST["Fast-track escalation (optional)"]
     direction TB
-    FG1["Passed at Step 2 or Step 3<br/><i>never informal consent alone</i>"]
+    FG1["Passed at Step 2 or 3<br/>never Step 1 alone"]
     FG2["Patch committee consensus<br/>or unanimous vote"]
     FG1 --> FG2
     FG2 --> FOUT(["Fast-track motion<br/>submitted to Congress"])
@@ -513,7 +513,7 @@ flowchart TB
 
   subgraph WG_CYCLE["Working Group cycle"]
     direction TB
-    COMM["Patch Committee<br/>chair · secretary · treasurer<br/><b>majority lay</b>"] -->|creates on consent| WG["Working Group<br/><i>time-limited remit</i>"]
+    COMM["Patch Committee<br/>chair · secretary · treasurer<br/><b>majority lay</b>"] -->|creates on consent| WG["Working Group<br/>time-limited remit"]
     WG -->|reports back| COMM
     COMM -.->|renew or close| WG
   end
@@ -540,7 +540,7 @@ flowchart TB
 
   subgraph SLOW["Slow track"]
     direction TB
-    SPOLIS["pol.is conversation<br/><i>asynchronous deliberation</i>"]
+    SPOLIS["pol.is conversation<br/>asynchronous deliberation"]
     SRESULT["Results presented<br/>to membership"]
     SPOLIS --> SRESULT
   end
@@ -549,7 +549,7 @@ flowchart TB
     direction TB
     FPOLIS["pol.is conversation"]
     FRESULT["Results presented<br/>to membership"]
-    FVOTE["Direct vote<br/><i>participation-gated:<br/>only those who joined<br/>the conversation</i>"]
+    FVOTE["Direct vote<br/>only conversation<br/>participants may vote"]
     FPOLIS --> FRESULT --> FVOTE
   end
 

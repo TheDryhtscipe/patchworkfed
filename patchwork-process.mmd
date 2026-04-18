@@ -3,11 +3,11 @@ flowchart TB
 
   subgraph MEETING["Patch meeting"]
     direction TB
-    M(["Member"]) -->|submits motion<br/>in advance| AGENDA["Standing orders<br/><i>compile agenda</i>"]
-    AGENDA --> SENSE{{"Sense vote<br/><i>federation floor threshold</i>"}}
+    M(["Member"]) -->|submits motion<br/>in advance| AGENDA["Standing orders<br/>compile agenda"]
+    AGENDA --> SENSE{{"Sense vote<br/>federation floor threshold"}}
     SENSE -->|passes| S1["Step 1<br/>Informal Consent"]
     SENSE -.->|fails| DROP["Drops off agenda"]
-    S1 -->|objection| S2["Step 2<br/>Formal Consent<br/><i>dedicated session</i>"]
+    S1 -->|objection| S2["Step 2<br/>Formal Consent<br/>dedicated session"]
     S2 -->|deadlock| S3["Step 3<br/>Ballot"]
     S1 -->|passes| OUT(["Local decision<br/>or slow-track motion"])
     S2 -->|consent reached| OUT
@@ -16,7 +16,7 @@ flowchart TB
 
   subgraph FAST["Fast-track escalation (optional)"]
     direction TB
-    FG1["Passed at Step 2 or Step 3<br/><i>never informal consent alone</i>"]
+    FG1["Passed at Step 2 or 3<br/>never Step 1 alone"]
     FG2["Patch committee consensus<br/>or unanimous vote"]
     FG1 --> FG2
     FG2 --> FOUT(["Fast-track motion<br/>submitted to Congress"])
@@ -27,7 +27,7 @@ flowchart TB
 
   subgraph WG_CYCLE["Working Group cycle"]
     direction TB
-    COMM["Patch Committee<br/>chair · secretary · treasurer<br/><b>majority lay</b>"] -->|creates on consent| WG["Working Group<br/><i>time-limited remit</i>"]
+    COMM["Patch Committee<br/>chair · secretary · treasurer<br/><b>majority lay</b>"] -->|creates on consent| WG["Working Group<br/>time-limited remit"]
     WG -->|reports back| COMM
     COMM -.->|renew or close| WG
   end
